@@ -13,7 +13,7 @@ fun usage () =
 	output (stdErr,
 	    "Usage:\n" ^
             "    example [-v]\n" ^
-            "where -v raises the log level from WARNING to INFO");
+            "where -v raises the log level from WARNING to INFO\n");
         raise Fail "Incorrect arguments specified"
     end
 
