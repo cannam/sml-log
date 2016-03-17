@@ -1,0 +1,5 @@
+
+A simple logging module in Standard ML.
+
+See example.sml (and/or run "mlton example.mlb && ./example").
+
