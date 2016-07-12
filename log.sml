@@ -44,9 +44,9 @@ structure Log : LOG = struct
     fun time_string () =
         Time.fmt 6 (Time.- (Time.now (), !start_time))
             
-    val no_log = ("", [])
+    val noLog = ("", [])
 
-    fun set_log_level l =
+    fun setLogLevel l =
         (level := l;
          start_time := Time.now ())
                                        

@@ -19,7 +19,7 @@ fun usage () =
 
 fun handle_args args =
     case args of
-        "-v"::rest => (Log.set_log_level Log.INFO ; handle_args rest)
+        "-v"::rest => (Log.setLogLevel Log.INFO ; handle_args rest)
       | [] => example ()
       | _ => usage ()
 

@@ -10,9 +10,9 @@ signature LOG = sig
     type arg = string * interpolable list
     type thunk = unit -> arg
 
-    val set_log_level : level -> unit
+    val setLogLevel : level -> unit
 
-    val no_log : arg
+    val noLog : arg
     val info : thunk -> unit
     val warn : thunk -> unit
     val error : thunk -> unit
