@@ -1,18 +1,25 @@
 
 structure Log : LOG = struct
 
-    datatype level =
-             ERROR | WARN | INFO
+    datatype level = ERROR | WARN | INFO | DEBUG
 
     val level = ref WARN
     val start_time = ref (Time.now ())
 
-    datatype interpolable =
-             I of int | R of real | B of bool | S of string | SL of string list
-
-    type arg = string * interpolable list
+    type arg = string * string list
     type thunk = unit -> arg
 
+    val I = Int.toString
+    val R = Real.toString
+    fun B b = if b then "true" else "false"
+    fun S s = s
+    val SL = String.concatWith "\n"
+    fun RV v =
+        let fun to_list v = rev (Vector.foldl (op::) [] v)
+        in "[" ^ (String.concatWith "," (map Real.toString (to_list v))) ^ "]"
+        end
+    fun RA a = RV (Array.vector a)
+                             
     fun interpolate str values =
         let fun int_aux acc chars [] _ = String.implode (rev acc @ chars)
               | int_aux acc [] _ _ =
@@ -24,17 +31,8 @@ structure Log : LOG = struct
                 if first = #"\\" then
                     int_aux acc rest values (not escaped)
                 else if first = #"%" andalso not escaped then
-                    let val insertion =
-                            case (hd values) of
-                                I i => Int.toString i
-                              | R r => Real.toString r
-                              | B b => if b then "true" else "false"
-                              | S s => s
-                              | SL sl => String.concatWith "\n" sl
-                    in
-                        int_aux ((rev (String.explode insertion)) @ acc)
-                                rest (tl values) escaped
-                    end
+                    int_aux ((rev (String.explode (hd values))) @ acc)
+                            rest (tl values) escaped
                 else
                     int_aux (first::acc) rest values false
         in
@@ -59,13 +57,18 @@ structure Log : LOG = struct
     fun log (string, args) =
         print (interpolate string args)
               
+    fun debug f =
+        if !level = DEBUG then
+            log (f ())
+        else ()
+              
     fun info f =
-        if !level = INFO then
+        if !level = INFO orelse !level = DEBUG then
             log (f ())
         else ()
                  
     fun warn f =
-        if !level = INFO orelse !level = WARN then
+        if !level = WARN orelse !level = INFO orelse !level = DEBUG then
             log (f ())
         else ()
                  
