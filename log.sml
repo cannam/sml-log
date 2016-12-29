@@ -77,3 +77,21 @@ structure Log : LOG = struct
 
 end
 
+structure LogDebug : LOG = Log
+
+structure LogInfo : LOG = struct
+    open Log
+    val debug = ignore
+end
+
+structure LogWarn : LOG = struct
+    open LogInfo
+    val info = ignore
+end
+
+structure LogError : LOG = struct
+    open LogWarn
+    val warn = ignore
+end
+
+                               
