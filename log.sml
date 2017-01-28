@@ -5,7 +5,7 @@ structure Log :> LOG = struct
 
     datatype level = ERROR | WARN | INFO | DEBUG
 
-    val level = ref WARN
+    val level = (print "creating level\n"; ref WARN)
     fun setLogLevel l = (level := l; start_time := Time.now ())
 
     datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
@@ -15,7 +15,7 @@ structure Log :> LOG = struct
         elements = [ ELAPSED_TIME, LEVEL, MESSAGE ],
         separator = ": "
     }
-    fun setLogFormat f = format := f
+    fun setLogFormat f = (format := f; start_time := Time.now ())
                     
     type arg = string * string list
     type thunk = unit -> arg
@@ -70,8 +70,8 @@ structure Log :> LOG = struct
         if string <> "" then TextIO.output (TextIO.stdErr, string ^ "\n")
         else ()
 
-    fun log level (string, args) =
-        print
+    fun log_with printer level (string, args) =
+        printer
             let val { elements, separator } = !format
             in
                 String.concatWith separator
@@ -81,7 +81,15 @@ structure Log :> LOG = struct
                                        | MESSAGE => interpolate string args)
                                        elements)
             end
-              
+
+    val log = log_with print
+
+    val log_fail =
+        let fun print_fail msg = (print msg ; raise Fail msg; ())
+        in
+            log_with print_fail
+        end
+            
     fun debug f =
         if !level = DEBUG then
             log DEBUG (f ())
@@ -99,6 +107,9 @@ structure Log :> LOG = struct
                  
     fun error f =
         log ERROR (f ())
+                 
+    fun fatal f =
+        log_fail ERROR (f ())
               
     fun debug_d a =
         if !level = DEBUG then
@@ -117,6 +128,9 @@ structure Log :> LOG = struct
                  
     fun error_d a =
         log ERROR a
+                 
+    fun fatal_d a =
+        log_fail ERROR a
 
 end
 

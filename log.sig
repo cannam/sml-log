@@ -23,8 +23,9 @@ signature LOG = sig
     *)
     val debug : thunk -> unit (* High-volume in inner loops, off by default *)
     val info : thunk -> unit  (* Modest informational stuff, off by default *)
-    val warn : thunk -> unit  (* Warnings, on by default *)
-    val error : thunk -> unit (* Fatal errors, on by default *)
+    val warn : thunk -> unit  (* Warning, on by default *)
+    val error : thunk -> unit (* Fatal error, on by default *)
+    val fatal : thunk -> unit (* Fatal error + throw Fail as well as logging *)
 
     (* The _d (direct) variants take arguments directly. For example:
 
@@ -37,7 +38,8 @@ signature LOG = sig
     val debug_d : arg -> unit (* High-volume in inner loops, off by default *)
     val info_d : arg -> unit  (* Modest informational stuff, off by default *)
     val warn_d : arg -> unit  (* Warnings, on by default *)
-    val error_d : arg -> unit (* Fatal errors, on by default *)
+    val error_d : arg -> unit (* Fatal error, on by default *)
+    val fatal_d : arg -> unit (* Fatal error + throw Fail as well as logging *)
 
     (* Data-to-string conversion shorthands: *)
     val I : int -> string
