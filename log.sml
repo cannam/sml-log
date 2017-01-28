@@ -5,7 +5,7 @@ structure Log :> LOG = struct
 
     datatype level = ERROR | WARN | INFO | DEBUG
 
-    val level = (print "creating level\n"; ref WARN)
+    val level = ref WARN
     fun setLogLevel l = (level := l; start_time := Time.now ())
 
     datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
