@@ -1,12 +1,14 @@
 
 structure Log :> LOG = struct
 
-    val start_time = ref (Time.now ())
+    val startTime = ref (Time.now ())
 
+    fun resetElapsedTime () = startTime := Time.now ()
+                         
     datatype level = ERROR | WARN | INFO | DEBUG
 
     val level = ref WARN
-    fun setLogLevel l = (level := l; start_time := Time.now ())
+    fun setLogLevel l = level := l
 
     datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
     type format = { elements: element list, separator: string }
@@ -15,7 +17,7 @@ structure Log :> LOG = struct
         elements = [ ELAPSED_TIME, LEVEL, MESSAGE ],
         separator = ": "
     }
-    fun setLogFormat f = (format := f; start_time := Time.now ())
+    fun setLogFormat f = format := f
                     
     type arg = string * string list
     type thunk = unit -> arg
@@ -26,8 +28,8 @@ structure Log :> LOG = struct
     fun S s = s
     val SL = String.concatWith "\n"
     fun RV v =
-        let fun to_list v = rev (Vector.foldl (op::) [] v)
-        in "[" ^ (String.concatWith "," (map Real.toString (to_list v))) ^ "]"
+        let fun toList v = rev (Vector.foldl (op::) [] v)
+        in "[" ^ (String.concatWith "," (map Real.toString (toList v))) ^ "]"
         end
     fun RA a = RV (Array.vector a)
     val X = exnMessage
@@ -39,30 +41,30 @@ structure Log :> LOG = struct
              str ^ "\"")
             
     fun interpolate str values =
-        let fun int_aux acc chars [] _ = String.implode (rev acc @ chars)
-              | int_aux acc [] _ _ = (tooManyValues str; int_aux acc [] [] false)
-              | int_aux acc (first::rest) values escaped =
+        let fun intAux acc chars [] _ = String.implode (rev acc @ chars)
+              | intAux acc [] _ _ = (tooManyValues str; intAux acc [] [] false)
+              | intAux acc (first::rest) values escaped =
                 if first = #"\\" then
-                    int_aux acc rest values (not escaped)
+                    intAux acc rest values (not escaped)
                 else if first = #"%" andalso not escaped then
-                    int_aux ((rev (String.explode (hd values))) @ acc)
+                    intAux ((rev (String.explode (hd values))) @ acc)
                             rest (tl values) escaped
                 else
-                    int_aux (first::acc) rest values false
+                    intAux (first::acc) rest values false
         in
-            int_aux [] (String.explode str) values false
+            intAux [] (String.explode str) values false
         end
 
-    fun elapsed_string () =
-        Time.fmt 6 (Time.- (Time.now (), !start_time))
+    fun elapsedString () =
+        Time.fmt 6 (Time.- (Time.now (), !startTime))
 
-    fun date_string () =
+    fun dateString () =
         Date.fmt "%Y-%m-%d %H:%M:%S" (Date.fromTimeLocal (Time.now ()))
 
-    fun level_string ERROR = "ERROR"
-      | level_string WARN = "WARNING"
-      | level_string INFO = "INFO"
-      | level_string DEBUG = "DEBUG"
+    fun levelString ERROR = "ERROR"
+      | levelString WARN = "WARNING"
+      | levelString INFO = "INFO"
+      | levelString DEBUG = "DEBUG"
                       
     val noLog = ("", [])
 
@@ -70,24 +72,24 @@ structure Log :> LOG = struct
         if string <> "" then TextIO.output (TextIO.stdErr, string ^ "\n")
         else ()
 
-    fun log_with printer level (string, args) =
+    fun logWith printer level (string, args) =
         printer
             let val { elements, separator } = !format
             in
                 String.concatWith separator
-                                  (map (fn ELAPSED_TIME => elapsed_string ()
-                                       | DATE_TIME => date_string ()
-                                       | LEVEL => level_string level
+                                  (map (fn ELAPSED_TIME => elapsedString ()
+                                       | DATE_TIME => dateString ()
+                                       | LEVEL => levelString level
                                        | MESSAGE => interpolate string args)
                                        elements)
             end
 
-    val log = log_with print
+    val log = logWith print
 
-    val log_fail =
-        let fun print_fail msg = (print msg ; raise Fail msg; ())
+    val logFail =
+        let fun printFail msg = (print msg ; raise Fail msg; ())
         in
-            log_with print_fail
+            logWith printFail
         end
             
     fun debug f =
@@ -109,7 +111,7 @@ structure Log :> LOG = struct
         log ERROR (f ())
                  
     fun fatal f =
-        log_fail ERROR (f ())
+        logFail ERROR (f ())
               
     fun debug_d a =
         if !level = DEBUG then
@@ -130,7 +132,7 @@ structure Log :> LOG = struct
         log ERROR a
                  
     fun fatal_d a =
-        log_fail ERROR a
+        logFail ERROR a
 
 end
 

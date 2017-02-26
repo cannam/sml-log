@@ -1,12 +1,14 @@
 
 signature LOG = sig
-
+    
     datatype level = ERROR | WARN | INFO | DEBUG
     val setLogLevel : level -> unit
 
     datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
     type format = { elements: element list, separator: string }
     val setLogFormat : format -> unit
+
+    val resetElapsedTime : unit -> unit
                                 
     type arg = string * string list
     type thunk = unit -> arg
