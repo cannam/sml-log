@@ -10,7 +10,7 @@ signature LOG = sig
 
     val resetElapsedTime : unit -> unit
                                 
-    type arg = string * string list
+    type arg = string * string list (*!!! could just be string list *)
     type thunk = unit -> arg
     val noLog : arg
 
@@ -51,6 +51,7 @@ signature LOG = sig
     val SL : string list -> string
     val RV : real vector -> string
     val RA : real array -> string
+    val T : Time.time -> string
     val X : exn -> string
                                
 end

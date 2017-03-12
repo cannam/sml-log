@@ -32,6 +32,7 @@ structure Log :> LOG = struct
         in "[" ^ (String.concatWith "," (map Real.toString (toList v))) ^ "]"
         end
     fun RA a = RV (Array.vector a)
+    val T = R o Time.toReal
     val X = exnMessage
 
     fun tooManyValues str =
