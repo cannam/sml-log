@@ -9,8 +9,14 @@ signature LOG = sig
     val setLogFormat : format -> unit
 
     val resetElapsedTime : unit -> unit
-                                
-    type arg = string * string list (*!!! could just be string list *)
+
+    (* arg is a list of strings, where the first is the format string
+       and the rest are arguments to be interpolated. The format string
+       must contain a % character for each of the remaining strings,
+       which will be interpolated to replace the % characters in turn.
+    *)
+    type arg = string list
+                      
     type thunk = unit -> arg
     val noLog : arg
 

@@ -19,7 +19,7 @@ structure Log :> LOG = struct
     }
     fun setLogFormat f = format := f
                     
-    type arg = string * string list
+    type arg = string list
     type thunk = unit -> arg
 
     val I = Int.toString
@@ -67,13 +67,14 @@ structure Log :> LOG = struct
       | levelString INFO = "INFO"
       | levelString DEBUG = "DEBUG"
                       
-    val noLog = ("", [])
+    val noLog = [""]
 
     fun print string =
         if string <> "" then TextIO.output (TextIO.stdErr, string ^ "\n")
         else ()
 
-    fun logWith printer level (string, args) =
+    fun logWith printer level [] = ()
+      | logWith printer level (string::args) =
         printer
             let val { elements, separator } = !format
             in

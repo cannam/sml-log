@@ -1,22 +1,31 @@
 
-fun example () =
+fun example1 () =
     let open Log
     in
-        info (fn () => ("Checking for blips...", []));
-        warn (fn () => ("Spurious warning: % blips detected in % sector!!",
-                        [I 4, S "Zarquil"]));
-        info (fn () => ("Done", []))
+        info (fn () => ["Checking for blips..."]);
+        warn (fn () => ["Spurious warning: % blips detected in % sector!!",
+                        I 4, S "Zarquil"]);
+        info (fn () => ["Done"])
     end
-
-structure Log = LogWarn
 
 fun example2 () =
     let open Log
     in
-        info (fn () => ("Checking for blips...", []));
-        warn (fn () => ("Spurious warning: % blips detected in % sector!!",
-                        [I 4, S "Zarquil"]));
-        info (fn () => ("Done", []))
+        info_d ["Checking for blips..."];
+        warn_d ["Spurious warning: % blips detected in % sector!!",
+                I 4, S "Zarquil"];
+        info_d ["Done"]
+    end
+
+structure Log = LogWarn (* should never print info output *)
+
+fun example3 () =
+    let open Log
+    in
+        info (fn () => ["Checking for blips..."]);
+        warn (fn () => ["Spurious warning: % blips detected in % sector!!",
+                        I 4, S "Zarquil"]);
+        info (fn () => ["Done"])
     end
 
 fun usage () =
@@ -31,7 +40,7 @@ fun usage () =
 fun handle_args args =
     case args of
         "-v"::rest => (Log.setLogLevel Log.INFO ; handle_args rest)
-      | [] => (example () ; example2 ())
+      | [] => (example1 () ; example2 () ; example3 ())
       | _ => usage ()
 
 fun main () =
