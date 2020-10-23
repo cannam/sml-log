@@ -55,10 +55,10 @@ structure Log :> LOG = struct
     fun S s = s
     val SL = String.concatWith "\n"
     fun RV v =
-        let fun toList v = rev (Vector.foldl (op::) [] v)
+        let fun toList v = rev (RealVector.foldl (op::) [] v)
         in "[" ^ (String.concatWith "," (map Real.toString (toList v))) ^ "]"
         end
-    fun RA a = RV (Array.vector a)
+    fun RA a = RV (RealArray.vector a)
     val T = R o Time.toReal
     val X = exnMessage
 

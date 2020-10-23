@@ -23,7 +23,7 @@ signature LOG = sig
     (* The standard log functions take an anonymous function (a thunk)
        as argument. For example:
 
-           info (fn () => ("Loading data from %...", [S filename]))
+           info (fn () => ["Loading data from %...", S filename])
 
        The thunk is only dereferenced if the log level is high enough
        for the message to be printed, thus ensuring little or no work
@@ -37,7 +37,7 @@ signature LOG = sig
 
     (* The _d (direct) variants take arguments directly. For example:
 
-           info_d ("Loading data from %...", [S filename])
+           info_d ["Loading data from %...", S filename]
 
        This may be slower in cases where the log level is not high
        enough to actually print the resulting message, simply because
@@ -55,8 +55,8 @@ signature LOG = sig
     val B : bool -> string
     val S : string -> string
     val SL : string list -> string
-    val RV : real vector -> string
-    val RA : real array -> string
+    val RV : RealVector.vector -> string
+    val RA : RealArray.array -> string
     val T : Time.time -> string
     val X : exn -> string
                                
