@@ -1,14 +1,41 @@
 
 structure Log :> LOG = struct
-
-    val startTime = ref (Time.now ())
-
-    fun resetElapsedTime () = startTime := Time.now ()
                          
     datatype level = ERROR | WARN | INFO | DEBUG
 
-    val level = ref WARN
-    fun setLogLevel l = level := l
+    val level : level option ref = ref NONE
+    val startTime : Time.time option ref = ref NONE
+
+    fun elapsedTime () =
+        case !startTime of
+            SOME t => (Time.- (Time.now (), t))
+          | NONE => (startTime := SOME (Time.now ()); Time.zeroTime)
+                                           
+    fun currentLevel () =
+        case !level of
+            SOME level => level
+          | NONE =>
+            let val defaultLevel =
+                    case OS.Process.getEnv "LOGLEVEL" of
+                        SOME "error" => ERROR
+                      | SOME "warn" => WARN
+                      | SOME "info" => INFO
+                      | SOME "debug" => DEBUG
+                      | SOME other =>
+                        (TextIO.output
+                             (TextIO.stdErr,
+                              "Logger: NOTE: Unknown log level in LOGLEVEL " ^
+                              "environment variable: supported values are " ^
+                              "error, warn, info, or debug\n");
+                         WARN)
+                      | NONE => WARN
+            in
+                level := SOME defaultLevel;
+                defaultLevel
+            end
+
+    fun resetElapsedTime () = startTime := SOME (Time.now ())
+    fun setLogLevel l = level := SOME l
 
     datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
     type format = { elements: element list, separator: string }
@@ -57,7 +84,7 @@ structure Log :> LOG = struct
         end
 
     fun elapsedString () =
-        Time.fmt 6 (Time.- (Time.now (), !startTime))
+        Time.fmt 6 (elapsedTime ())
 
     fun dateString () =
         Date.fmt "%Y-%m-%d %H:%M:%S" (Date.fromTimeLocal (Time.now ()))
@@ -95,19 +122,28 @@ structure Log :> LOG = struct
         end
             
     fun debug f =
-        if !level = DEBUG then
-            log DEBUG (f ())
-        else ()
+        let val level = currentLevel ()
+        in
+            if level = DEBUG then
+                log DEBUG (f ())
+            else ()
+        end
               
     fun info f =
-        if !level = INFO orelse !level = DEBUG then
-            log INFO (f ())
-        else ()
+        let val level = currentLevel ()
+        in
+            if level = INFO orelse level = DEBUG then
+                log INFO (f ())
+            else ()
+        end
                  
     fun warn f =
-        if !level = WARN orelse !level = INFO orelse !level = DEBUG then
-            log WARN (f ())
-        else ()
+        let val level = currentLevel ()
+        in
+            if level = WARN orelse level = INFO orelse level = DEBUG then
+                log WARN (f ())
+            else ()
+        end
                  
     fun error f =
         log ERROR (f ())
@@ -116,19 +152,28 @@ structure Log :> LOG = struct
         logFail ERROR (f ())
               
     fun debug_d a =
-        if !level = DEBUG then
-            log DEBUG a
-        else ()
+        let val level = currentLevel ()
+        in
+            if level = DEBUG then
+                log DEBUG a
+            else ()
+        end
               
     fun info_d a =
-        if !level = INFO orelse !level = DEBUG then
-            log INFO a
-        else ()
+        let val level = currentLevel ()
+        in
+            if level = INFO orelse level = DEBUG then
+                log INFO a
+            else ()
+        end
                  
     fun warn_d a =
-        if !level = WARN orelse !level = INFO orelse !level = DEBUG then
-            log WARN a
-        else ()
+        let val level = currentLevel ()
+        in
+            if level = WARN orelse level = INFO orelse level = DEBUG then
+                log WARN a
+            else ()
+        end
                  
     fun error_d a =
         log ERROR a
