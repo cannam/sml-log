@@ -52,11 +52,15 @@ signature LOG = sig
     (* Data-to-string conversion shorthands: *)
     val I : int -> string
     val R : real -> string
+    val N : real -> string
+    val C : char -> string
     val B : bool -> string
     val S : string -> string
     val SL : string list -> string
     val RV : RealVector.vector -> string
     val RA : RealArray.array -> string
+    val NV : RealVector.vector -> string
+    val NA : RealArray.array -> string
     val T : Time.time -> string
     val X : exn -> string
                                
