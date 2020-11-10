@@ -53,6 +53,7 @@ signature LOG = sig
     val I : int -> string
     val R : real -> string
     val N : real -> string
+    val Z : real * real -> string
     val C : char -> string
     val B : bool -> string
     val S : string -> string
@@ -62,6 +63,7 @@ signature LOG = sig
     val NV : RealVector.vector -> string
     val NA : RealArray.array -> string
     val T : Time.time -> string
+    val O : string option -> string
     val X : exn -> string
                                
 end
