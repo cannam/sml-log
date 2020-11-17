@@ -39,7 +39,7 @@ structure Log :> LOG = struct
     fun resetElapsedTime () = startTime := SOME (Time.now ())
     fun setLogLevel l = level := SOME l
 
-    datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
+    datatype element = ELAPSED_TIME | DATE_TIME | PID | LEVEL | MESSAGE
     type format = { elements: element list, separator: string }
 
     val format = ref {
@@ -57,6 +57,10 @@ structure Log :> LOG = struct
     fun dateString () =
         Date.fmt "%Y-%m-%d %H:%M:%S" (Date.fromTimeLocal (Time.now ()))
 
+    fun pidString () =
+        "#" ^ (SysWord.fmt StringCvt.DEC (Posix.Process.pidToWord
+                                              (Posix.ProcEnv.getpid ())))
+                 
     fun levelString ERROR = "ERROR"
       | levelString WARN = "WARNING"
       | levelString INFO = "INFO"
@@ -76,6 +80,7 @@ structure Log :> LOG = struct
                 String.concatWith separator
                                   (map (fn ELAPSED_TIME => elapsedString ()
                                        | DATE_TIME => dateString ()
+                                       | PID => pidString ()
                                        | LEVEL => levelString level
                                        | MESSAGE => interpolate string args)
                                        elements)

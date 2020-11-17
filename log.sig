@@ -4,7 +4,7 @@ signature LOG = sig
     datatype level = ERROR | WARN | INFO | DEBUG
     val setLogLevel : level -> unit
 
-    datatype element = ELAPSED_TIME | DATE_TIME | LEVEL | MESSAGE
+    datatype element = ELAPSED_TIME | DATE_TIME | PID | LEVEL | MESSAGE
     type format = { elements: element list, separator: string }
     val setLogFormat : format -> unit
 
