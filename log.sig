@@ -34,6 +34,7 @@ signature LOG = sig
     val warn : thunk -> unit  (* Warning, on by default *)
     val error : thunk -> unit (* Fatal error, on by default *)
     val fatal : thunk -> unit (* Fatal error + throw Fail as well as logging *)
+    val log : level -> thunk -> unit
 
     (* The _d (direct) variants take arguments directly. For example:
 
@@ -48,6 +49,7 @@ signature LOG = sig
     val warn_d : arg -> unit  (* Warnings, on by default *)
     val error_d : arg -> unit (* Fatal error, on by default *)
     val fatal_d : arg -> unit (* Fatal error + throw Fail as well as logging *)
+    val log_d : level -> arg -> unit
 
     (* Data-to-string conversion shorthands: *)
     val I : int -> string

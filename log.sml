@@ -86,71 +86,46 @@ structure Log :> LOG = struct
                                        elements)
             end
 
-    val log = logWith print
-
     val logFail =
         let fun printFail msg = (print msg ; raise Fail msg; ())
         in
             logWith printFail
         end
+
+    fun shouldLog level =
+        case (level, currentLevel ()) of
+            (DEBUG, DEBUG) => true
+          | (INFO, DEBUG) => true
+          | (INFO, INFO) => true
+          | (WARN, DEBUG) => true
+          | (WARN, INFO) => true
+          | (WARN, WARN) => true
+          | (ERROR, _) => true
+          | _ => false
+
+    fun log level f =
+        if shouldLog level
+        then logWith print level (f ())
+        else ()
             
-    fun debug f =
-        let val level = currentLevel ()
-        in
-            if level = DEBUG then
-                log DEBUG (f ())
-            else ()
-        end
-              
-    fun info f =
-        let val level = currentLevel ()
-        in
-            if level = INFO orelse level = DEBUG then
-                log INFO (f ())
-            else ()
-        end
-                 
-    fun warn f =
-        let val level = currentLevel ()
-        in
-            if level = WARN orelse level = INFO orelse level = DEBUG then
-                log WARN (f ())
-            else ()
-        end
-                 
-    fun error f =
-        log ERROR (f ())
+    val debug = log DEBUG
+    val info = log INFO
+    val warn = log WARN
+    val error = log ERROR
                  
     fun fatal f =
         logFail ERROR (f ())
-              
-    fun debug_d a =
-        let val level = currentLevel ()
-        in
-            if level = DEBUG then
-                log DEBUG a
-            else ()
-        end
-              
-    fun info_d a =
-        let val level = currentLevel ()
-        in
-            if level = INFO orelse level = DEBUG then
-                log INFO a
-            else ()
-        end
-                 
-    fun warn_d a =
-        let val level = currentLevel ()
-        in
-            if level = WARN orelse level = INFO orelse level = DEBUG then
-                log WARN a
-            else ()
-        end
-                 
-    fun error_d a =
-        log ERROR a
-                 
+
+    fun log_d level arg =
+        if shouldLog level
+        then logWith print level arg
+        else ()
+            
+    val debug_d = log_d DEBUG
+    val info_d = log_d INFO
+    val warn_d = log_d WARN
+    val error_d = log_d ERROR
+
     fun fatal_d a =
         logFail ERROR a
 
