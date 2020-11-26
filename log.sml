@@ -38,6 +38,7 @@ structure Log :> LOG = struct
 
     fun resetElapsedTime () = startTime := SOME (Time.now ())
     fun setLogLevel l = level := SOME l
+    fun getLogLevel () = currentLevel ()
 
     datatype element = ELAPSED_TIME | DATE_TIME | PID | LEVEL | MESSAGE
     type format = { elements: element list, separator: string }
