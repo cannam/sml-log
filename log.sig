@@ -143,6 +143,7 @@ signature LOG = sig
 
     (* Data-to-string conversion shorthands: *)
     val I : int -> string
+    val FI : FixedInt.int -> string
     val R : real -> string
     val N : real -> string
     val Z : real * real -> string
