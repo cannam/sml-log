@@ -141,6 +141,9 @@ signature LOG = sig
         given one. *)
     val log_d : level -> arg -> unit
 
+    (** Same as StringInterpolate.interpolate, exposed for convenience *)
+    val interpolate : string -> string list -> string
+                                                   
     (* Data-to-string conversion shorthands: *)
     val I : int -> string
     val FI : FixedInt.int -> string
