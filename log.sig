@@ -12,13 +12,13 @@
     or thunk, as argument. The thunk is only called if the log level
     is high enough for the message to be printed.  For example,
 <pre>
-           info (fn () => ["Loading data from %...", S filename])
+           info (fn () => ["Loading data from %1...", S filename])
 </pre>
 
     The direct variants, with _d suffix, take arguments directly. For
     example:
 <pre>
-           info_d ["Loading data from %...", S filename]
+           info_d ["Loading data from %1...", S filename]
 </pre>
     This may be slower in cases where the log level is not high enough
     to actually print the resulting message.
@@ -77,10 +77,13 @@ signature LOG = sig
     val resetElapsedTime : unit -> unit
 
     (** A list of strings, where the first is the format string and
-        the rest are arguments to be interpolated. The format string
-        must contain a % character for each of the remaining strings,
-        which will be interpolated to replace the % characters in
-        turn.
+        the rest are arguments to be interpolated. 
+
+        Each occurrence in the format string of the character %
+        followed by a single digit is replaced by the correspondingly
+        indexed item in the remaining strings (counting from 1).
+
+        For a literal %, use %%.
     *)
     type arg = string list
 

@@ -3,7 +3,7 @@ fun example1 () =
     let open Log
     in
         info (fn () => ["Checking for blips..."]);
-        warn (fn () => ["Spurious warning: % blips detected in % sector!!",
+        warn (fn () => ["Spurious warning: %1 blips detected in %2 sector!!",
                         I 4, S "Zarquil"]);
         info (fn () => ["Done"])
     end
@@ -12,7 +12,7 @@ fun example2 () =
     let open Log
     in
         info_d ["Checking for blips..."];
-        warn_d ["Spurious warning: % blips detected in % sector!!",
+        warn_d ["Spurious warning: %1 blips detected in %2 sector!!",
                 I 4, S "Zarquil"];
         info_d ["Done"]
     end
@@ -23,7 +23,7 @@ fun example3 () =
     let open Log
     in
         info (fn () => ["Checking for blips..."]);
-        warn (fn () => ["Spurious warning: % blips detected in % sector!!",
+        warn (fn () => ["Spurious warning: %1 blips detected in %2 sector!!",
                         I 4, S "Zarquil"]);
         info (fn () => ["Done"])
     end
