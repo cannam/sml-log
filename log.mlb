@@ -2,3 +2,4 @@ $(SML_LIB)/basis/basis.mlb
 ../sml-stringinterpolate/string-interpolate.mlb
 log.sig
 log.sml
+category-log-fn.sml

@@ -24,7 +24,9 @@
     to actually print the resulting message.
 
     Various functions to adjust the global log level and formatting
-    are also provided.
+    are also provided. The default logger refers to the LOGLEVEL
+    environment variable (with possible values debug, info, warn, or
+    error) to set the log level at startup.
 
     See also STRING_INTERPOLATE for details of the string
     interpolation and conversion mechanisms.
@@ -143,7 +145,7 @@ signature LOG = sig
         arguments, if the current log level is at least as severe as the
         given one. *)
     val log_d : level -> arg -> unit
-
+                                    
     (** Same as StringInterpolate.interpolate, exposed for convenience *)
     val interpolate : string -> string list -> string
                                                    
