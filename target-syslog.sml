@@ -10,5 +10,7 @@ structure LogTargetSyslog : LOG_TARGET = struct
                         "NOTE: Syslog requested but unavailable, " ^
                         "will log to stderr instead\n");
          LogTargetStderr.new ())
+
+    fun isAvailable () = false
                     
 end

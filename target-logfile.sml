@@ -18,5 +18,7 @@ structure LogTargetLogfile : LOG_TARGET = struct
                                "ERROR: Unable to open logfile \"" ^
                                filename ^ "\" for writing");
                 fn s => ())
-                        
+
+    fun isAvailable () = true
+			     
 end

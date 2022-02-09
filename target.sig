@@ -6,6 +6,8 @@ signature LOG_TARGET = sig
     type new_args
 
     val new : new_args -> writer
+
+    val isAvailable : unit -> bool
                                        
 end
 

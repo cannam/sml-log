@@ -11,4 +11,6 @@ structure LogTargetStderr : LOG_TARGET = struct
             then TextIO.output (TextIO.stdErr, s ^ "\n")
             else ()
 
+     fun isAvailable () = true
+			      
 end
