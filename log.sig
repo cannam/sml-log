@@ -75,6 +75,13 @@ signature LOG = sig
     (** Set the global log format. *)
     val setLogFormat : format -> unit
 
+    (** Set global log target writers. The provided list completely
+        replaces any previously set writers. The default is a single
+        writer that writes to stderr. You can provide any functions
+        that (presumably) write the supplied string somewhere; for
+        example, the function returned by LogTargetSyslog.new. *)
+    val setLogWriters : (string -> unit) list -> unit
+
     (** Set the elapsed time to zero. *)
     val resetElapsedTime : unit -> unit
 
@@ -111,10 +118,6 @@ signature LOG = sig
     (** Print a log message from the given thunk. *)
     val error : thunk -> unit
 
-    (** Print a log message from the given thunk and also raise a Fail
-        exception with the same message. *)
-    val fatal : thunk -> unit
-
     (** Print a log message from the supplied thunk, if the current
         log level is at least as severe as the given one. *)
     val log : level -> thunk -> unit
@@ -136,10 +139,6 @@ signature LOG = sig
     (** Print a log message from the given format string and
         arguments. *)
     val error_d : arg -> unit
-
-    (** Print a log message from the given format string and arguments
-        and also raise a Fail exception with the same message. *)
-    val fatal_d : arg -> unit
 
     (** Print a log message from the given format string and
         arguments, if the current log level is at least as severe as the

@@ -4,8 +4,10 @@ structure Log :> LOG = struct
     open StringInterpolate
 
     datatype level = ERROR | WARN | INFO | DEBUG
+    datatype target = STDERR | SYSLOG | LOGFILE of string
 
     val level : level option ref = ref NONE
+    val writers : (string -> unit) list option ref = ref NONE
     val startTime : Time.time option ref = ref NONE
 
     fun elapsedTime () =
@@ -48,7 +50,9 @@ structure Log :> LOG = struct
         separator = ": "
     }
     fun setLogFormat f = format := f
-                    
+
+    fun setLogWriters tt = writers := SOME tt
+                                       
     type arg = string list
     type thunk = unit -> arg
 
@@ -70,8 +74,13 @@ structure Log :> LOG = struct
     val noLog = [""]
 
     fun print string =
-        if string <> "" then TextIO.output (TextIO.stdErr, string ^ "\n")
-        else ()
+        case !writers of
+            NONE =>
+            if string <> ""
+            then TextIO.output (TextIO.stdErr, string ^ "\n")
+            else ()
+         | SOME ww => 
+           List.app (fn w => w string) ww
 
     fun logWith printer level [] = ()
       | logWith printer level (string::args) =
@@ -86,12 +95,6 @@ structure Log :> LOG = struct
                                        | MESSAGE => interpolate string args)
                                        elements)
             end
-
-    val logFail =
-        let fun printFail msg = (print msg ; raise Fail msg; ())
-        in
-            logWith printFail
-        end
 
     fun shouldLog level =
         case (level, currentLevel ()) of
@@ -113,9 +116,6 @@ structure Log :> LOG = struct
     val info = log INFO
     val warn = log WARN
     val error = log ERROR
-                 
-    fun fatal f =
-        logFail ERROR (f ())
 
     fun log_d level arg =
         if shouldLog level
@@ -126,9 +126,6 @@ structure Log :> LOG = struct
     val info_d = log_d INFO
     val warn_d = log_d WARN
     val error_d = log_d ERROR
-
-    fun fatal_d a =
-        logFail ERROR a
 
 end
 

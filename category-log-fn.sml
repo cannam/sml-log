@@ -83,9 +83,6 @@ functor CategoryLogFn (ARG : sig
     val info = log INFO
     val warn = log WARN
     val error = log ERROR
-
-    fun fatal f =
-        Log.fatal (fn () => adapt (f ()))
                     
     fun log_d level arg =
         if (case (level, shouldLog ()) of
@@ -99,8 +96,5 @@ functor CategoryLogFn (ARG : sig
     val info_d = log_d INFO
     val warn_d = log_d WARN
     val error_d = log_d ERROR
-
-    fun fatal_d arg =
-        Log.fatal_d (adapt arg)
 
 end
