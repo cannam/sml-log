@@ -1,5 +1,5 @@
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -9,6 +9,16 @@ void write_to_syslog(const char *string)
 {
     static CFStringRef format = CFSTR("%s");
     NSLog(format, string);
+}
+
+#elif defined(_WIN32)
+
+#include <windows.h>
+#include <debugapi.h>
+
+void write_to_syslog(const char *string)
+{
+    OutputDebugString(string);
 }
 
 #else
