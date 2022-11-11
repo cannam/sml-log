@@ -131,19 +131,19 @@ end
 
 structure LogDebug :> LOG = Log
 
-structure LogInfo :> LOG = struct
+structure LogInfo :> LOG where type level = Log.level = struct
     open Log
     val debug = ignore
     val debug_d = ignore
 end
 
-structure LogWarn :> LOG = struct
+structure LogWarn :> LOG where type level = Log.level = struct
     open LogInfo
     val info = ignore
     val info_d = ignore
 end
 
-structure LogError :> LOG = struct
+structure LogError :> LOG where type level = Log.level = struct
     open LogWarn
     val warn = ignore
     val warn_d = ignore

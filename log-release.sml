@@ -3,8 +3,9 @@
    order to eliminate debug calls entirely. (Though you may find it
    makes very little difference.)
 
-   If you are also using category loggers, include this after log.sml
-   but before category-log-fn.sml.
+   This is for builds not using category logging; those using category
+   logging should include category-log-fn-release.sml after
+   category-log-fn.sml instead.
 *)
 structure Log = LogInfo
 
