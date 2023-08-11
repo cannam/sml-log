@@ -4,7 +4,6 @@ structure Log :> LOG = struct
     open StringInterpolate
 
     datatype level = ERROR | WARN | INFO | DEBUG
-    datatype target = STDERR | SYSLOG | LOGFILE of string
 
     val level : level option ref = ref NONE
     val writers : (string -> unit) list option ref = ref NONE
